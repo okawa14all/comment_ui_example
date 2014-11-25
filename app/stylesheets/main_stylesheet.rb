@@ -1,5 +1,6 @@
 class MainStylesheet < ApplicationStylesheet
   include AutoCompletionCellStylesheet
+  include CommentCellStylesheet
 
   def setup
     # Add sytlesheet specific setup stuff here.

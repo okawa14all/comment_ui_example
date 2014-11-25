@@ -1,10 +1,15 @@
 class MainController < SLKTextViewController
   MENTION_PREFIX = '@'
   AUTO_COMPLETION_CELL_ID = "AutoCompletionCell"
+  COMMENT_CELL_ID = 'CommentCell'
 
   def init
     super.initWithTableViewStyle(UITableViewStylePlain)
     @users = %w(john paul ringo george jonathan ほげ)
+    @comments = [
+      'comment1 comment1 comment1 comment1 comment1',
+      '@john: comment2 comment2 comment2 comment2 comment2',
+      '@paul: comment3 comment2 comment2 comment2 comment2']
     self
   end
 
@@ -16,7 +21,7 @@ class MainController < SLKTextViewController
     rmq(self.view).apply_style :root_view
 
     # SLKTextViewController settings
-    self.inverted = true
+    self.inverted = false
     self.textView.placeholder = 'comment...'
     self.textInputbar.maxCharCount = 140
     self.textInputbar.counterStyle = SLKCounterStyleSplit
@@ -29,7 +34,18 @@ class MainController < SLKTextViewController
 
   #---------- Overriden SLKTextViewController Methods ----------
   def didPressRightButton(sender)
-    puts 'didPressRightButton'
+    self.textView.refreshFirstResponder
+    comment = self.textView.text.copy
+    @comments.push(comment)
+    index_path = NSIndexPath.indexPathForRow(0, inSection: 0)
+    self.tableView.insertRowsAtIndexPaths(
+      [index_path],
+      withRowAnimation: UITableViewRowAnimationFade
+    )
+    self.tableView.reloadData
+
+    self.dismissKeyboard(true)
+
     super
   end
 
@@ -68,7 +84,7 @@ class MainController < SLKTextViewController
     if table_view == self.autoCompletionView
       rmq.stylesheet.auto_completion_cell_height
     else
-      0
+      CommentCell.height_for(@comments[index_path.row])
     end
   end
 
@@ -76,7 +92,7 @@ class MainController < SLKTextViewController
     if table_view == self.autoCompletionView
       @search_result.present? ? @search_result.size : 0
     else
-      0
+      @comments.present? ? @comments.size : 0
     end
   end
 
@@ -84,7 +100,7 @@ class MainController < SLKTextViewController
     if table_view == self.autoCompletionView
       auto_completion_cell_for_row_at_index_path(index_path)
     else
-      nil
+      comment_cell_for_row_at_index_path(index_path)
     end
   end
 
@@ -128,7 +144,21 @@ class MainController < SLKTextViewController
     end
 
     cell.update(user_name)
+    cell
+  end
 
+  def comment_cell_for_row_at_index_path(index_path)
+    comment_text = @comments[index_path.row]
+
+    cell = self.tableView.dequeueReusableCellWithIdentifier(COMMENT_CELL_ID) || begin
+      rmq.create(
+        CommentCell, :comment_cell,
+        reuse_identifier: COMMENT_CELL_ID,
+        cell_style: UITableViewCellStyleDefault
+      ).get
+    end
+
+    cell.update(comment_text)
     cell
   end
 
