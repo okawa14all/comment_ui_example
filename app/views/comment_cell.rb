@@ -1,4 +1,5 @@
 class CommentCell < UITableViewCell
+  attr_accessor :index_path
 
   def rmq_build
     q = rmq(self.contentView)

@@ -50,6 +50,24 @@ class MainController < SLKTextViewController
     super
   end
 
+  def didCommitTextEditing(sender)
+    if @edit_mode_index_path
+      new_comment = self.textView.text
+      @comments[@edit_mode_index_path.row] = new_comment
+      self.tableView.reloadData
+    end
+
+    super
+    @edit_mode_index_path = nil
+    self.dismissKeyboard(true)
+  end
+
+  def didCancelTextEditing(sender)
+    super
+    @edit_mode_index_path = nil
+    self.dismissKeyboard(true)
+  end
+
   def canShowAutoCompletion
     prefix = self.foundPrefix
     word = self.foundWord
@@ -156,11 +174,24 @@ class MainController < SLKTextViewController
         CommentCell, :comment_cell,
         reuse_identifier: COMMENT_CELL_ID,
         cell_style: UITableViewCellStyleDefault
-      ).get
+      ).on(:long_press) do |sender, event|
+        edit_comment(sender)
+      end.get
     end
+
+    cell.index_path = index_path
 
     cell.update(comment_text)
     cell
+  end
+
+  # Action Methods
+  def edit_comment(cell)
+    @edit_mode_index_path = cell.index_path
+    comment_text = @comments[cell.index_path.row]
+    self.editText(comment_text)
+    self.tableView.scrollToRowAtIndexPath(cell.index_path,
+      atScrollPosition: UITableViewScrollPositionBottom, animated: true)
   end
 
 end
