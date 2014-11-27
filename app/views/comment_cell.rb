@@ -3,6 +3,9 @@ class CommentCell < UITableViewCell
   def rmq_build
     q = rmq(self.contentView)
     @ttt_label = q.append(TTTAttributedLabel, :text).get
+    # enable to detect links automaticaly
+    @ttt_label.enabledTextCheckingTypes = NSTextCheckingTypeLink
+    @ttt_label.delegate = self # TTTAttributedLabelDelegate protocol
 
     if self.respondsToSelector('layoutMargins')
       self.layoutMargins = UIEdgeInsetsZero
@@ -69,6 +72,13 @@ class CommentCell < UITableViewCell
       rmq.stylesheet.mention_font.pointSize,
       nil
     )
+  end
+
+  #--- TTTAttributedLabelDelegate
+  # cf. https://github.com/mattt/TTTAttributedLabel/blob/master/TTTAttributedLabel/TTTAttributedLabel.h
+  def attributedLabel(label, didSelectLinkWithURL: url)
+    # launch safari and open URL
+    UIApplication.sharedApplication.openURL(url)
   end
 
 end
