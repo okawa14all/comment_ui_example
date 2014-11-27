@@ -9,7 +9,8 @@ class MainController < SLKTextViewController
     @comments = [
       'comment1 comment1 comment1 comment1 comment1',
       '@john: comment2 comment2 comment2 comment2 comment2',
-      '@paul: comment3 comment2 comment2 comment2 comment2']
+      '@paul: comment3 comment3 comment3 comment3 comment3',
+      'comment4 http://www.google.co.jp/ comment4 comment4']
     self
   end
 

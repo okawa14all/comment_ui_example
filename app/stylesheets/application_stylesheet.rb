@@ -20,6 +20,11 @@ class ApplicationStylesheet < RubyMotionQuery::Stylesheet
     font.add_named :medium,   font_family, 24
     font.add_named :small,    font_family, 18
 
+    bold_font_family = 'HelveticaNeue-Bold'
+    font.add_named :bold_large,    bold_font_family, 36
+    font.add_named :bold_medium,   bold_font_family, 24
+    font.add_named :bold_small,    bold_font_family, 18
+
     color.add_named :tint, '236EB7'
     color.add_named :translucent_black, color.from_rgba(0, 0, 0, 0.4)
     color.add_named :battleship_gray,   '#7F7F7F'
